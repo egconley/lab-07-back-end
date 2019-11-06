@@ -24,11 +24,13 @@ app.use(errorHandler);
 
 function locationHandler(request,response) {
   const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${request.query.data}&key=${process.env.GEOCODE_API_KEY}`;
-
+  console.log(locations[url]);
   if ( locations[url] ) {
+    console.log(url);
     response.send(locations[url]);
   }
   else {
+    console.log('THE URL',url);
     superagent.get(url)
       .then(data => {
         const geoData = data.body;
