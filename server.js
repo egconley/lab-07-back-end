@@ -37,7 +37,7 @@ function locationHandler(request,response) {
         response.send(location);
       })
       .catch( () => {
-        errorHandler('So sorry, something went wrong.', request, response);
+        errorHandler(`So sorry, something went wrong. url: ${url}`, request, response);
       });
   }
 }
@@ -64,7 +64,7 @@ function weatherHandler(request,response) {
       response.status(200).json(weatherSummaries);
     })
     .catch( () => {
-      errorHandler('So sorry, something went wrong.', request, response);
+      errorHandler(`So sorry, something went wrong. url: ${url}`, request, response);
     });
 
 }
