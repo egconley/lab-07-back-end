@@ -18,6 +18,7 @@ let locations = {};
 // Route Definitions
 app.get('/location', locationHandler);
 app.get('/weather', weatherHandler);
+app.get('/business', yelpHandler);
 app.use('*', notFoundHandler);
 app.use(errorHandler);
 
@@ -68,12 +69,38 @@ function weatherHandler(request,response) {
     .catch( () => {
       errorHandler(`So sorry, something went wrong. url: ${url}`, request, response);
     });
-
 }
 
 function Weather(day) {
   this.forecast = day.summary;
   this.time = new Date(day.time * 1000).toString().slice(0, 15);
+}
+
+// http://localhost:3000/weather?data%5Blatitude%5D=47.6062095&data%5Blongitude%5D=-122.3320708
+// That encoded query string is: data[latitude]=47.6062095&data[longitude]=122.3320708
+function yelpHandler(request,response) {
+
+  const url = `https://api.yelp.com/v3/businesses/search/${process.env.YELP_API_KEY}/latitude=${request.query.data.latitude}&longitude=${request.query.data.longitude}`;
+
+  superagent.get(url)
+    .then( data => {
+      const businessSearch = data.body.businesses.data.map(business => {
+        return new Yelp(business);
+      });
+      response.status(200).json(businessSearch);
+    })
+    .catch( () => {
+      errorHandler(`So sorry, something went wrong. url: ${url} business names: ${name}`, request, response);
+    });
+
+}
+
+function Yelp(business) {
+  this.name = business.name;
+  this.rating = business.rating;
+  this.price = 'price placeholder';
+  this.url = 'url placeholder';
+  this.image_url = 'image_url placeholder'
 }
 
 function notFoundHandler(request,response) {
