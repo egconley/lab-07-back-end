@@ -76,21 +76,20 @@ function Weather(day) {
   this.time = new Date(day.time * 1000).toString().slice(0, 15);
 }
 
-// http://localhost:3000/weather?data%5Blatitude%5D=47.6062095&data%5Blongitude%5D=-122.3320708
-// That encoded query string is: data[latitude]=47.6062095&data[longitude]=122.3320708
+// Yelp
 function yelpHandler(request,response) {
 
-  const url = `https://api.yelp.com/v3/businesses/search/${process.env.YELP_API_KEY}/latitude=${request.query.data.latitude}&longitude=${request.query.data.longitude}`;
+  const url = `https://api.yelp.com/v3/businesses/search/${process.env.YELP_API_KEY}/latitude=${request.query.latitude}&longitude=${request.query.longitude}`;
 
   superagent.get(url)
     .then( data => {
-      const businessSearch = data.body.businesses.data.map(business => {
+      const businessSearch = data.body.businesses.map(business => {
         return new Yelp(business);
       });
       response.status(200).json(businessSearch);
     })
     .catch( () => {
-      errorHandler(`So sorry, something went wrong. url: ${url} business names: ${name}`, request, response);
+      errorHandler(`So sorry, something went wrong. url: ${url}` , request, response);
     });
 
 }
